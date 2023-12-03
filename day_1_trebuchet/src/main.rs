@@ -1,17 +1,46 @@
 mod lexer;
 use lexer::Lexer;
-use std::fs;
 
 fn main() {
-    let input = fs::read_to_string("E:/src/rust/advent_of_code/day_1_trebuchet/input.txt").unwrap();
-
+    let input = std::fs::read_to_string("day_1_trebuchet/input.txt").unwrap();
     let mut sum = 0;
 
     for line in input.lines() {
-        sum += decode_line(line);
+        let digits = decode_digits(line);
+
+        let calibration_value = decode_calibration_value(&digits);
+
+        sum += calibration_value;
     }
     
     println!("{}", sum);
+}
+
+
+fn decode_digits(line: &str) -> Vec<usize> {
+    let line: Vec<char> = line.chars().collect();
+    let tokens: Vec<String> = Lexer::new(&line).into();
+    
+    let digits = tokens.iter()
+        .filter_map(
+            |token| {
+                token_to_digit(token)
+            }
+        )
+        .collect();
+    
+    digits
+}
+
+fn decode_calibration_value(digits: &[usize]) -> usize {
+    let first = digits.first().unwrap_or(&0);
+    let last = digits.last().unwrap_or(&0);
+    
+    let calibration_value = format!("{}{}", first, last)
+        .parse()
+        .expect("first and last are digits");
+
+    calibration_value
 }
 
 fn token_to_digit(token: &str) -> Option<usize> {
@@ -26,55 +55,10 @@ fn token_to_digit(token: &str) -> Option<usize> {
         "eight" => Some(8),
         "nine" => Some(9),
         _ => match token.parse::<usize>() {
-            Ok(num) => Some(num),
+            Ok(digit) => Some(digit),
             Err(_) => {
                 None
             },
         }
     }
-}
-
-fn decode_line(line: &str) -> usize {
-    let line_chars = line.chars().collect::<Vec<_>>();
-    let tokens: Vec<String> = Lexer::new(&line_chars).into();
-    
-    let digits = tokens.iter()
-        .map(|token| token_to_digit(token))
-        .filter(|o| o.is_some())
-        .map(|o| o.expect("filtered for only Some"))
-        .collect::<Vec<_>>();
-
-    let first = digits.iter().nth(0)
-        .expect("line should not be empty");
-    let last = digits.iter().last()
-        .expect("line should not be empty");
-    
-    let calibration_value = format!("{}{}", first, last)
-        .parse()
-        .expect("only digit chars");
-
-    println!("line: {}\ntokens: {:?}\ndigits: {:?}\ncalibration value: {}\n", line, tokens, digits, calibration_value);
-
-    calibration_value
-} 
-
-#[test]
-fn test() {
-    let input = "1abc2
-pqr3stu8vwx
-a1b2c3d4e5f
-treb7uchet";
-
-    let mut sum = 0;
-
-    for line in input.lines() {
-        let calibration_value = decode_line(line);
-
-        sum += calibration_value;
-
-        println!("{}", calibration_value)
-    }
-
-    println!("{}", sum);
-    assert!(sum == 142);   
 }

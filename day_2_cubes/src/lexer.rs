@@ -1,3 +1,5 @@
+use crate::game::Game;
+
 #[derive(Debug)]
 pub enum Token {
     Game(usize),
@@ -6,41 +8,10 @@ pub enum Token {
     Blue(usize),
     Other(String),
 }
-impl Token {
-    pub fn from_raw(raw_token: &[char]) -> Option<Self> {
-        if raw_token.starts_with(&['G', 'a', 'm', 'e']) {
-            let slice = raw_token[4..].iter().collect::<String>().trim().to_owned();
-            if let Ok(value) = slice.parse() {
-                return Some(Token::Game(value));
-            }
-        }
-        if raw_token.ends_with(&['r', 'e', 'd']) {
-            let slice = raw_token[..raw_token.len() - 3].iter().collect::<String>().trim().to_owned();
-            if let Ok(value) = slice.parse() {
-                return Some(Token::Red(value));
-            }
-        }
-        if raw_token.ends_with(&['g','r','e','e','n']) {
-            let slice = raw_token[..raw_token.len() - 5].iter().collect::<String>().trim().to_owned();
-            if let Ok(value) = slice.parse() {
-                return Some(Token::Green(value));
-            }
-        }
-        if raw_token.ends_with(&['b','l','u','e']) {
-            let slice = raw_token[..raw_token.len() - 4].iter().collect::<String>().trim().to_owned();
-            if let Ok(value) = slice.parse() {
-                return Some(Token::Blue(value));
-            }
-
-        }
-
-        Some(Token::Other(raw_token.iter().collect()))
-    }
-}
 impl std::fmt::Display for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", match self {
-            Self::Game(id) => format!("Game {}:", id),
+            Self::Game(id) => format!("Game {}", id),
             Self::Red(val) => format!("{} red", val),
             Self::Blue(val) => format!("{} blue", val),
             Self::Green(val) => format!("{} green", val),
@@ -98,25 +69,25 @@ impl <'a> Lexer<'a> {
 
         // is the token a number.
         else if self.content[0].is_numeric() {
+            // 
             let number = self.cut_token(|character| character.is_numeric())
                 .iter()
                 .collect::<String>()
-                .trim()
                 .parse::<usize>()
                 .expect("only numeric chars");
 
             self.cut_token(|character| character.is_whitespace());
 
             
-            let color = self.cut_token(|character| character.is_alphabetic())
+            let identifier = self.cut_token(|character| character.is_alphabetic())
                 .iter()
                 .collect::<String>();
             
-            let token = match color.as_str() {
+            let token = match identifier.as_str() {
                 "red" => Token::Red(number),
                 "green" => Token::Green(number),
                 "blue" => Token::Blue(number),
-                _ => Token::Other(format!("{} {}", number, color)),
+                _ => Token::Other(format!("{} {}", number, identifier)),
             };
 
             Some(token)
@@ -124,28 +95,25 @@ impl <'a> Lexer<'a> {
 
         // is the token a string
         else if self.content[0].is_alphabetic() {
-            let game = self.cut_token(|character| character.is_alphabetic()).iter().collect::<String>();
+            let identifier = self.cut_token(|character| character.is_alphabetic()).iter().collect::<String>();
 
             self.cut_token(|character| character.is_whitespace());
 
-            let id = self.cut_token(|character| character.is_numeric())
+            let number = self.cut_token(|character| character.is_numeric())
                 .iter()
                 .collect::<String>()
-                .trim()
                 .parse::<usize>()
                 .expect("only numeric characters");
             
-            if game.as_str() == "Game" {
-                Some(Token::Game(id))
-            }
-            else {
-                Some(Token::Other(format!("{} {}", game, id)))
+            match identifier.as_str() {
+                "Game" => Some(Token::Game(number)),
+                _ => Some(Token::Other(format!("{} {}", identifier, number))),
             }
         }
 
         else {
-            let raw_token = self.cut(1).iter().collect::<String>();
-            Some(Token::Other(raw_token))
+            let separator = self.cut(1).iter().collect::<String>();
+            Some(Token::Other(separator))
             // self.next_token()
         }
     }
@@ -173,7 +141,11 @@ fn test() {
         let tokens = Lexer::new(&chars);
 
         for token in tokens {
-            println!("{:?}", token);
+            print!("{}", match token {
+                Token::Other(separator) => format!("{} ", separator),
+                _ => token.to_string(),
+            });
         }
+        println!("\n{:?}\n", line.parse::<Game>().unwrap()); // game is missing the last CubeSet
     }
 }

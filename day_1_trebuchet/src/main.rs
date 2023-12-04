@@ -2,7 +2,7 @@ mod lexer;
 use lexer::Lexer;
 
 fn main() {
-    let input = std::fs::read_to_string("day_1_trebuchet/input.txt").unwrap();
+    let input = std::fs::read_to_string("day1.txt").unwrap();
     let mut sum = 0;
 
     for line in input.lines() {

@@ -5,3 +5,7 @@ version = 3
 [[package]]
 name = "day_1_trebuchet"
 version = "0.1.0"
+
+[[package]]
+name = "day_2_cubes"
+version = "0.1.0"

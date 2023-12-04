@@ -7,14 +7,6 @@ pub struct CubeSet {
     green: usize,
 }
 impl CubeSet {
-    pub fn new(red_token: Token, blue_token: Token, green_token: Token) -> CubeSet {
-        let Token::Red(red) = red_token else { panic!("Invalid red token") };
-        let Token::Green(green) = green_token else { panic!("Invalid green token") };
-        let Token::Blue(blue) = blue_token else { panic!("Invalid blue token") };
-
-        CubeSet { red, blue, green }
-    }
-
     pub fn is_possible(&self, max: CubeSet) -> bool {
         todo!();
     }

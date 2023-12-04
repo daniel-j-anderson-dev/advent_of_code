@@ -14,6 +14,10 @@ impl CubeSet {
 
         CubeSet { red, blue, green }
     }
+
+    pub fn is_possible(&self, max: CubeSet) -> bool {
+        todo!();
+    }
 }
 
 #[derive(Debug)]

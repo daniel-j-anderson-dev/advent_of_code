@@ -1,10 +1,9 @@
 mod lexer;
 mod game;
-use std::str::FromStr;
 
 use crate::{
     game::Game,
-    lexer::Lexer,
+    lexer::Lexer
 };
 
 fn main() {
@@ -12,7 +11,11 @@ fn main() {
         .expect("Failed to open day 2 input");
 
     for line in input.lines() {
-        let Ok(game) = Game::from_str(line) else { continue; };
-        println!("{:?}", game);
+        let line_chars = line.chars().collect::<Vec<_>>();
+        let line_tokens = Lexer::new(&line_chars).collect::<Vec<_>>();
+
+        let Ok(game) = line.parse::<Game>() else { continue }; // each game is missing the last CubeSet
+
+        println!("tokens: {:?}\nparsed: {:?}\n", line_tokens, game);
     }
 }

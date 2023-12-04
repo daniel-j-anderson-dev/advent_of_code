@@ -3,7 +3,7 @@ mod game;
 
 use crate::{
     game::Game,
-    lexer::Lexer
+    lexer::Lexer,
 };
 
 fn main() {

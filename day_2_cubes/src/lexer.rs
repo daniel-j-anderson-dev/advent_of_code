@@ -1,5 +1,3 @@
-use crate::game::Game;
-
 #[derive(Debug)]
 pub enum Token {
     Game(usize),
@@ -135,6 +133,8 @@ impl<'a> Iterator for Lexer<'a> {
 
 #[test]
 fn test() {
+    use crate::game::Game;
+
     let input = std::fs::read_to_string("../day2.txt").unwrap();
     for line in input.lines() {
         let chars = line.chars().collect::<Vec<_>>();

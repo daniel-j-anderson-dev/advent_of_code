@@ -32,6 +32,9 @@ impl Game {
         }
         true
     }
+    pub fn lowest_possible_max(&self) -> CubeSet {
+        todo!();
+    }
     pub fn id(&self) -> usize {
         self.id
     } 

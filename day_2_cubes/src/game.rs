@@ -1,6 +1,6 @@
 use crate::lexer::{Lexer, Token};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct CubeSet {
     red: usize,
     blue: usize,
@@ -10,6 +10,9 @@ impl CubeSet {
     pub fn is_possible(&self, max: CubeSet) -> bool {
         self.red <= max.red && self.blue <= max.blue && self.green <= max.green
     }
+    pub fn power(&self) -> usize {
+        self.red * self.blue * self.green
+    }
 }
 
 #[derive(Debug)]
@@ -18,12 +21,12 @@ pub struct Game {
     sets: Vec<CubeSet>,
 }
 impl Game {
+    // The Elf would first like to know which games would have been possible if the bag contained only 12 red cubes, 13 green cubes, and 14 blue cubes?
     const MAX: CubeSet = CubeSet {
         red: 12,
         blue: 14,
         green: 13,
     };
-    // The Elf would first like to know which games would have been possible if the bag contained only 12 red cubes, 13 green cubes, and 14 blue cubes?
     pub fn is_possible(&self) -> bool {
         for set in self.sets.iter() {
             if !set.is_possible(Game::MAX) {
@@ -32,8 +35,20 @@ impl Game {
         }
         true
     }
-    pub fn lowest_possible_max(&self) -> CubeSet {
-        todo!();
+    pub fn fewest_cubes_needed_to_make_possible(&self) -> CubeSet {
+        let mut max = CubeSet {
+            red: 0,
+            blue: 0,
+            green: 0,
+        };
+
+        for set in self.sets.iter() {
+            max.red = max.red.max(set.red);
+            max.blue = max.blue.max(set.blue);
+            max.green = max.green.max(set.green);
+        }
+
+        max
     }
     pub fn id(&self) -> usize {
         self.id

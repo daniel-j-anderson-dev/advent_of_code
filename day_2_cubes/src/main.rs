@@ -18,15 +18,23 @@ fn main() {
                 continue;
             },
         };
+
+        let fewest_cubes = game.fewest_cubes_needed_to_make_possible();
+        let power = fewest_cubes.power();
+
+        sum += power;
         
-        if game.is_possible() {
-            sum += game.id();
-            print!("  POSSIBLE ");
-        } else {
-            print!("IMPOSSIBLE ");
-        }
-        
-        println!("{:?}", game);
+        println!(
+"{:?}
+{}
+fewest: {:?}
+fewest power: {}
+",
+            game,
+            if game.is_possible() { "POSSIBLE" } else { "IMPOSSIBLE" },
+            fewest_cubes,
+            power,
+        );
     }
 
     println!("{}", sum);

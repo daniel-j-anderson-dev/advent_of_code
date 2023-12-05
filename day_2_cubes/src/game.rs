@@ -31,7 +31,7 @@ impl std::str::FromStr for Game {
         let mut green = 0;
         let mut blue = 0;
 
-        for token in tokens.iter() {
+        for (token_index, token) in tokens.iter().enumerate() {
             
             if let Token::Game(id) = token {
                 if game_id.is_none() {
@@ -40,15 +40,15 @@ impl std::str::FromStr for Game {
             }
             
             if let Token::Red(value) = token {
-                red = *value;
-            }
-            if let Token::Green(value) = token {
-                green = *value;
-            }
-            if let Token::Blue(value) = token {
+                    red = *value;
+                }
+                if let Token::Green(value) = token {
+                    green = *value;
+                }
+                if let Token::Blue(value) = token {
                 blue = *value;
             }
-
+            
             if let Token::Other(s) = token {
                 if s == ";" {
                     sets.push(
@@ -62,7 +62,20 @@ impl std::str::FromStr for Game {
                     green = 0;
                     blue = 0;
                 }
-            }    
+            } else if token_index == tokens.len() - 1 {
+                sets.push(
+                    CubeSet {
+                        red,
+                        blue,
+                        green,
+                    }
+                );
+                red = 0;
+                green = 0;
+                blue = 0;
+            } else {
+                continue;
+            }
         }
         let Some(&id) = game_id else { return Err("No game id. missing Game token".into()) };
 

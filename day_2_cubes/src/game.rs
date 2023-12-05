@@ -47,20 +47,21 @@ impl std::str::FromStr for Game {
                 Token::Blue(cube_count) => {
                     blue = *cube_count;
                 },
-                Token::Other(separator)
-                if separator == ";" =>  {
-                    sets.push (
-                        CubeSet {
-                            red,
-                            blue,
-                            green,
-                        }
-                    );
-                    red = 0;
-                    green = 0;
-                    blue = 0;
+                Token::Other(separator) =>  {
+                    if separator == ";" {
+                        sets.push (
+                            CubeSet {
+                                red,
+                                blue,
+                                green,
+                            }
+                        );
+                        red = 0;
+                        green = 0;
+                        blue = 0;
+                    }
+                    continue;
                 },
-                Token::Other(_) => continue,
             }
 
             if token_index == tokens.len() - 1 {

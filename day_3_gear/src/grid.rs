@@ -32,6 +32,24 @@ impl Default for Token {
 pub struct Grid<const W: usize, const H: usize> {
     tokens: [[Token; W]; H],
 }
+impl<const W: usize, const H: usize> Grid<W, H> {
+    pub fn get_token(&self, row_index: isize, col_index: isize) -> Option<&Token> {
+        if row_index <= 0 || col_index <= 0 {
+            return None;
+        }
+        let row_index = row_index as usize;
+        let col_index = col_index as usize;
+
+
+        match self.tokens.get(row_index) {
+            Some(row) => match row.get(col_index) {
+                Some(token) => Some(token),
+                None => None,
+            },
+            None => None,
+        }
+    }
+}
 impl<const W: usize, const H: usize> std::str::FromStr for Grid<W, H> {
     type Err = Box<dyn std::error::Error>;
     fn from_str(s: &str) -> Result<Self, Self::Err> {

@@ -115,14 +115,6 @@ impl <'a> Lexer<'a> {
         }
     }
 }
-impl Into<Vec<String>> for Lexer<'_> {
-    fn into(self) -> Vec<String> {
-        self.map(|token| {
-            token.to_string()
-        })
-        .collect()
-    }
-}
 impl<'a> Iterator for Lexer<'a> {
     type Item = Token;
     fn next(&mut self) -> Option<Self::Item> {

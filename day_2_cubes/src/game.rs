@@ -8,7 +8,7 @@ pub struct CubeSet {
 }
 impl CubeSet {
     pub fn is_possible(&self, max: CubeSet) -> bool {
-        todo!();
+        self.red < max.red && self.blue < max.blue && self.green < max.green
     }
 }
 
@@ -16,6 +16,25 @@ impl CubeSet {
 pub struct Game {
     id: usize,
     sets: Vec<CubeSet>,
+}
+impl Game {
+    const MAX: CubeSet = CubeSet {
+        red: 12,
+        blue: 14,
+        green: 13,
+    };
+    // The Elf would first like to know which games would have been possible if the bag contained only 12 red cubes, 13 green cubes, and 14 blue cubes?
+    pub fn is_possible(&self) -> bool {
+        for set in self.sets.iter() {
+            if !set.is_possible(Game::MAX) {
+                return false
+            }
+        }
+        true
+    }
+    pub fn id(&self) -> usize {
+        self.id
+    } 
 }
 
 impl std::str::FromStr for Game {

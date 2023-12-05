@@ -42,10 +42,10 @@ impl std::str::FromStr for Game {
             if let Token::Red(value) = token {
                     red = *value;
                 }
-                if let Token::Green(value) = token {
-                    green = *value;
-                }
-                if let Token::Blue(value) = token {
+            if let Token::Green(value) = token {
+                green = *value;
+            }
+            if let Token::Blue(value) = token {
                 blue = *value;
             }
             

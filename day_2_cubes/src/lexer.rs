@@ -65,9 +65,7 @@ impl <'a> Lexer<'a> {
             self.next_token()
         }
 
-        // is the token a number.
         else if self.content[0].is_numeric() {
-            // 
             let number = self.cut_token(|character| character.is_numeric())
                 .iter()
                 .collect::<String>()
@@ -91,7 +89,6 @@ impl <'a> Lexer<'a> {
             Some(token)
         }
 
-        // is the token a string
         else if self.content[0].is_alphabetic() {
             let identifier = self.cut_token(|character| character.is_alphabetic()).iter().collect::<String>();
 
@@ -103,10 +100,12 @@ impl <'a> Lexer<'a> {
                 .parse::<usize>()
                 .expect("only numeric characters");
             
-            match identifier.as_str() {
-                "Game" => Some(Token::Game(number)),
-                _ => Some(Token::Other(format!("{} {}", identifier, number))),
-            }
+            let token = match identifier.as_str() {
+                "Game" => Token::Game(number),
+                _ => Token::Other(format!("{} {}", identifier, number)),
+            };
+
+            Some(token)
         }
 
         else {

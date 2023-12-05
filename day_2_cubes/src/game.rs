@@ -8,7 +8,7 @@ pub struct CubeSet {
 }
 impl CubeSet {
     pub fn is_possible(&self, max: CubeSet) -> bool {
-        self.red < max.red && self.blue < max.blue && self.green < max.green
+        self.red <= max.red && self.blue <= max.blue && self.green <= max.green
     }
 }
 

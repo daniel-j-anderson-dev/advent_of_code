@@ -26,7 +26,7 @@ fn main() {
             print!("IMPOSSIBLE ");
         }
         
-        println!("{}", line);
+        println!("{:?}", game);
     }
 
     println!("{}", sum);

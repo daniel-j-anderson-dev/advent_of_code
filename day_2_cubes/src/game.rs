@@ -36,6 +36,8 @@ impl std::str::FromStr for Game {
                 Token::Game(id) => {
                     if game_id.is_none() {
                        game_id = Some(id);
+                    } else {
+                        return Err("A game id already exists. More than one Game token".into())
                     }
                 },
                 Token::Red(cube_count) => {

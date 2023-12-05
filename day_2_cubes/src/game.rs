@@ -78,10 +78,11 @@ impl std::str::FromStr for Game {
             }
         }
 
-        let Some(&id) = game_id else { return Err("No game id. missing Game token".into()) };
-
         let game = Game {
-            id,
+            id: match game_id {
+                Some(id) => *id,
+                None => return Err("No game id. missing Game token".into()),
+            },
             sets,
         };
 

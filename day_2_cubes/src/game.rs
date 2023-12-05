@@ -32,26 +32,24 @@ impl std::str::FromStr for Game {
         let mut blue = 0;
 
         for (token_index, token) in tokens.iter().enumerate() {
-            
-            if let Token::Game(id) = token {
-                if game_id.is_none() {
-                    game_id = Some(id);
-                }
-            }
-            
-            if let Token::Red(value) = token {
-                    red = *value;
-                }
-            if let Token::Green(value) = token {
-                green = *value;
-            }
-            if let Token::Blue(value) = token {
-                blue = *value;
-            }
-            
-            if let Token::Other(s) = token {
-                if s == ";" {
-                    sets.push(
+            match token {
+                Token::Game(id) => {
+                    if game_id.is_none() {
+                       game_id = Some(id);
+                    }
+                },
+                Token::Red(cube_count) => {
+                    red = *cube_count;
+                },
+                Token::Green(cube_count) => {
+                    green = *cube_count;
+                },
+                Token::Blue(cube_count) => {
+                    blue = *cube_count;
+                },
+                Token::Other(separator)
+                if separator == ";" =>  {
+                    sets.push (
                         CubeSet {
                             red,
                             blue,
@@ -61,9 +59,12 @@ impl std::str::FromStr for Game {
                     red = 0;
                     green = 0;
                     blue = 0;
-                }
-            } else if token_index == tokens.len() - 1 {
-                sets.push(
+                },
+                Token::Other(_) => continue,
+            }
+
+            if token_index == tokens.len() - 1 {
+                sets.push (
                     CubeSet {
                         red,
                         blue,
@@ -73,8 +74,6 @@ impl std::str::FromStr for Game {
                 red = 0;
                 green = 0;
                 blue = 0;
-            } else {
-                continue;
             }
         }
 

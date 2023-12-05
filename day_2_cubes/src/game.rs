@@ -77,6 +77,7 @@ impl std::str::FromStr for Game {
                 continue;
             }
         }
+
         let Some(&id) = game_id else { return Err("No game id. missing Game token".into()) };
 
         let game = Game {

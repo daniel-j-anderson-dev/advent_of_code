@@ -47,27 +47,27 @@ impl<'a> Iterator for Lexer<'a> {
 
         // is the next token a stretch of whitespace?
         else if self.content.get_char(0).expect("not empty").is_whitespace() {
-            Some(self.cut_uniform_token(|character| character.is_whitespace()))
+            Some(self.cut_uniform_token(|c| c.is_whitespace()))
         }
 
         // is the next token numeric?
         else if self.content.get_char(0).expect("not empty").is_numeric() {
-            Some(self.cut_uniform_token(|character| character.is_numeric()))
+            Some(self.cut_uniform_token(|c| c.is_numeric()))
         }
 
         // is the next token alphabetic?
         else if self.content.get_char(0).expect("not empty").is_alphabetic() {
-            Some(self.cut_uniform_token(|character| character.is_alphabetic()))
+            Some(self.cut_uniform_token(|c| c.is_alphabetic()))
         }
 
         // is the next token a separator
         else if self.content.get_char(0).expect("not empty") == '.' {
-            Some(self.cut_uniform_token(|character| character == '.'))
+            Some(self.cut_uniform_token(|c| c == '.'))
         }
 
         // the next token is a symbol
         else {
-            Some(self.cut_uniform_token(|character| character != '.' && !character.is_alphanumeric() && !character.is_whitespace()))
+            Some(self.cut_uniform_token(|c| c != '.' && !c.is_alphanumeric() && !c.is_whitespace()))
         }
     }
 }

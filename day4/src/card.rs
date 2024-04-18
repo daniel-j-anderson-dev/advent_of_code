@@ -1,81 +1,144 @@
+use std::{
+    ops::{Deref, DerefMut},
+    str::FromStr,
+};
+
+use pest::{iterators::Pair, Parser};
+
+use self::parser::{CardParser, Rule};
+
+pub mod parser;
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct Card {
-    id: u32,
-    winning_numbers: Vec<u32>,
-    numbers: Vec<u32>,
+    id: usize,
+    winning_numbers: Vec<usize>,
+    numbers: Vec<usize>,
 }
 impl Card {
-    fn get_id(slice: &str) -> u32 {
-        slice
-            .chars()
-            .skip_while(|ch| !ch.is_numeric())
-            .take_while(|ch| ch.is_numeric())
-            .collect::<String>()
-            .parse()
-            .expect("No card id")
+    pub fn id(&self) -> usize {
+        return self.id;
     }
-    fn get_winning_numbers(slice: &str) -> Vec<u32> {
-        slice
-            .split_whitespace()
-            .take_while(|number| *number != "|")
-            .filter_map(|number| number.parse().ok())
-            .collect()
-    }
-    fn get_numbers(slice: &str) -> Vec<u32> {
-        slice
-            .split_whitespace()
-            .filter_map(|number| number.parse().ok())
-            .collect()
-    }
-    
-    pub fn points(&self) -> u32 {
-        let winner_count = self.numbers
+    pub fn winner_count(&self) -> usize {
+        self.numbers
             .iter()
             .filter(|number| self.winning_numbers.contains(number))
-            .count() as u32;
+            .count() as usize
+    }
+    pub fn points(&self) -> usize {
+        let winner_count = self.winner_count();
 
         if winner_count == 0 {
             0
         } else {
-            u32::pow(2, winner_count - 1)
+            usize::pow(2, winner_count as u32 - 1)
         }
     }
 }
-impl From<&str> for Card {
-    fn from(value: &str) -> Self {
-        let colon_index = value.find(':').expect("no ':' delimiter");
-        let pipe_index = value.find('|').expect("no '|' delimiter");
+impl TryFrom<Pair<'_, Rule>> for Card {
+    type Error = Box<dyn std::error::Error>;
+    fn try_from(value: pest::iterators::Pair<'_, Rule>) -> Result<Self, Self::Error> {
+        let card = match value.as_rule() {
+            Rule::Card => {
+                let mut inner_rules = value.into_inner();
 
-        let id = Card::get_id(value);
-        let winning_numbers = Card::get_winning_numbers(&value[colon_index..]);
-        let numbers = Card::get_numbers(&value[pipe_index..]);
+                let id = inner_rules.next().unwrap().as_str().parse().unwrap();
+                let winning_numbers = inner_rules
+                    .next()
+                    .unwrap()
+                    .as_str()
+                    .split_whitespace()
+                    .map(|s| s.parse().unwrap())
+                    .collect();
+                let numbers = inner_rules
+                    .next()
+                    .unwrap()
+                    .as_str()
+                    .split_whitespace()
+                    .map(|s| s.parse().unwrap())
+                    .collect();
 
-        Self { id, winning_numbers, numbers }
+                Card {
+                    id,
+                    winning_numbers,
+                    numbers,
+                }
+            }
+            rule => Err(format!(
+                "Can only create Card from Rule::Card; rule found: {:?}",
+                rule
+            ))?,
+        };
+
+        return Ok(card);
+    }
+}
+impl FromStr for Card {
+    type Err = String;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let colon_index = s.find(':').ok_or("no ':' delimiter")?;
+        let pipe_index = s.find('|').ok_or("no '|' delimiter")?;
+
+        let id = s
+            .chars()
+            .skip_while(|ch| !ch.is_numeric())
+            .take_while(|ch| ch.is_numeric())
+            .collect::<String>()
+            .parse::<usize>()
+            .expect("Only take numeric chars");
+
+        let winning_numbers = s[colon_index..pipe_index]
+            .split_whitespace()
+            .filter_map(|sub_slice| sub_slice.parse().ok())
+            .collect();
+
+        let numbers = s[pipe_index..]
+            .split_whitespace()
+            .filter_map(|sub_slice| sub_slice.parse().ok())
+            .collect();
+
+        Ok(Self {
+            id,
+            winning_numbers,
+            numbers,
+        })
     }
 }
 impl std::fmt::Display for Card {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "Card {:>3}: ", self.id)?;
         for (index, number) in self.winning_numbers.iter().enumerate() {
-            write!(f, "{:>2}{}", number, if index == self.winning_numbers.len() - 1 {" | "} else {" "})?;
+            write!(
+                f,
+                "{:>2}{}",
+                number,
+                if index == self.winning_numbers.len() - 1 {
+                    " | "
+                } else {
+                    " "
+                }
+            )?;
         }
         for (index, number) in self.numbers.iter().enumerate() {
-            write!(f, "{:>2}{}", number, if index == self.numbers.len() - 1 {""} else {" "})?;
+            write!(
+                f,
+                "{:>2}{}",
+                number,
+                if index == self.numbers.len() - 1 {
+                    ""
+                } else {
+                    " "
+                }
+            )?;
         }
         Ok(())
     }
 }
 
-
-#[test]
-fn test_get_id() {
-    for (line_index, line) in crate::INPUT.lines().enumerate() {
-        assert_eq!(Card::get_id(line), line_index as u32 + 1);
-    }
-}
 #[test]
 fn card_from_str() {
     for line in crate::INPUT.lines() {
-        let card = Card::from(line);
+        let card = line.parse::<Card>().unwrap();
         assert_eq!(card.to_string(), line);
     }
 }
@@ -92,6 +155,6 @@ Card   6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11";
     let points = [8, 2, 2, 1, 0, 0];
 
     for (line, card_points) in input.lines().zip(points) {
-        assert_eq!(card_points, Card::from(line).points());
+        assert_eq!(card_points, line.parse::<Card>().unwrap().points());
     }
 }

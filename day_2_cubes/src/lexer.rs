@@ -8,21 +8,25 @@ pub enum Token {
 }
 impl std::fmt::Display for Token {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", match self {
-            Self::Game(id) => format!("Game {}", id),
-            Self::Red(val) => format!("{} red", val),
-            Self::Blue(val) => format!("{} blue", val),
-            Self::Green(val) => format!("{} green", val),
-            Self::Other(s) => s.to_string(),
-        })
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Game(id) => format!("Game {}", id),
+                Self::Red(val) => format!("{} red", val),
+                Self::Blue(val) => format!("{} blue", val),
+                Self::Green(val) => format!("{} green", val),
+                Self::Other(s) => s.to_string(),
+            }
+        )
     }
 }
 
 /// an iterator over tokens in a slice of chars
 pub struct Lexer<'a> {
-    content: &'a [char]
+    content: &'a [char],
 }
-impl <'a> Lexer<'a> {
+impl<'a> Lexer<'a> {
     pub fn new(content: &'a [char]) -> Lexer<'a> {
         Lexer { content }
     }
@@ -45,9 +49,9 @@ impl <'a> Lexer<'a> {
     }
 
     /// This function truncates the left most token (ignoring whitespace) and returns it
-    /// 
-    /// 
-    /// # Parameters 
+    ///
+    ///
+    /// # Parameters
     ///  - token_definition: a non environment capturing function that represents which characters are valid for a token
     fn cut_token(&mut self, token_definition: fn(char) -> bool) -> &'a [char] {
         self.cut(self.find_token_end(token_definition))
@@ -58,15 +62,13 @@ impl <'a> Lexer<'a> {
         if self.content.is_empty() {
             None
         }
-
         // is the token a stretch of whitespace?
         else if self.content[0].is_whitespace() {
             self.cut_token(|character| character.is_whitespace());
             self.next_token()
-        }
-
-        else if self.content[0].is_numeric() {
-            let number = self.cut_token(|character| character.is_numeric())
+        } else if self.content[0].is_numeric() {
+            let number = self
+                .cut_token(|character| character.is_numeric())
                 .iter()
                 .collect::<String>()
                 .parse::<usize>()
@@ -74,11 +76,11 @@ impl <'a> Lexer<'a> {
 
             self.cut_token(|character| character.is_whitespace());
 
-            
-            let identifier = self.cut_token(|character| character.is_alphabetic())
+            let identifier = self
+                .cut_token(|character| character.is_alphabetic())
                 .iter()
                 .collect::<String>();
-            
+
             let token = match identifier.as_str() {
                 "red" => Token::Red(number),
                 "green" => Token::Green(number),
@@ -87,28 +89,28 @@ impl <'a> Lexer<'a> {
             };
 
             Some(token)
-        }
-
-        else if self.content[0].is_alphabetic() {
-            let identifier = self.cut_token(|character| character.is_alphabetic()).iter().collect::<String>();
+        } else if self.content[0].is_alphabetic() {
+            let identifier = self
+                .cut_token(|character| character.is_alphabetic())
+                .iter()
+                .collect::<String>();
 
             self.cut_token(|character| character.is_whitespace());
 
-            let number = self.cut_token(|character| character.is_numeric())
+            let number = self
+                .cut_token(|character| character.is_numeric())
                 .iter()
                 .collect::<String>()
                 .parse::<usize>()
                 .expect("only numeric characters");
-            
+
             let token = match identifier.as_str() {
                 "Game" => Token::Game(number),
                 _ => Token::Other(format!("{} {}", identifier, number)),
             };
 
             Some(token)
-        }
-
-        else {
+        } else {
             let separator = self.cut(1).iter().collect::<String>();
             Some(Token::Other(separator))
             // self.next_token()
@@ -132,10 +134,13 @@ fn test() {
         let tokens = Lexer::new(&chars);
 
         for token in tokens {
-            print!("{}", match token {
-                Token::Other(separator) => format!("{} ", separator),
-                _ => token.to_string(),
-            });
+            print!(
+                "{}",
+                match token {
+                    Token::Other(separator) => format!("{} ", separator),
+                    _ => token.to_string(),
+                }
+            );
         }
         println!("\n{:?}\n", line.parse::<Game>().unwrap()); // game is missing the last CubeSet
     }

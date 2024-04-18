@@ -56,7 +56,9 @@ impl From<char> for Token {
         Token {
             value,
             kind: match value {
-                value if value.is_numeric() => panic!("Did you check to the left and right for other numeric chars?!"),
+                value if value.is_numeric() => {
+                    panic!("Did you check to the left and right for other numeric chars?!")
+                }
                 '.' => TokenKind::Separator,
                 _ => TokenKind::Symbol,
             },
@@ -78,7 +80,6 @@ impl<const W: usize, const H: usize> Grid<W, H> {
         }
         let row_index = row_index as usize;
         let col_index = col_index as usize;
-
 
         match self.tokens.get(row_index) {
             Some(row) => match row.get(col_index) {
@@ -104,7 +105,7 @@ impl<const W: usize, const H: usize> Grid<W, H> {
             Some(token) => token.kind(),
             None => TokenKind::Uninitialized,
         };
-        
+
         let left = match self.get_token(row_index, col_index - 1) {
             Some(token) => token.kind(),
             None => TokenKind::Uninitialized,
@@ -113,7 +114,7 @@ impl<const W: usize, const H: usize> Grid<W, H> {
             Some(token) => token.kind(),
             None => TokenKind::Uninitialized,
         };
-        
+
         let bottom_left = match self.get_token(row_index + 1, col_index - 1) {
             Some(token) => token.kind(),
             None => TokenKind::Uninitialized,
@@ -130,7 +131,6 @@ impl<const W: usize, const H: usize> Grid<W, H> {
         top_left.is_symbol()    || top.is_symbol()    || top_right.is_symbol() ||
         left.is_symbol()        ||   /*token*/           right.is_symbol()     ||
         bottom_left.is_symbol() || bottom.is_symbol() || bottom_right.is_symbol()
-
     }
 }
 impl<const W: usize, const H: usize> std::str::FromStr for Grid<W, H> {
@@ -140,7 +140,6 @@ impl<const W: usize, const H: usize> std::str::FromStr for Grid<W, H> {
 
         for (row_i, line) in s.lines().enumerate() {
             for (col_i, character) in line.chars().enumerate() {
-                
                 match tokens.get_mut(row_i) {
                     Some(row) => match row.get_mut(col_i) {
                         Some(token) => *token = character.into(),
@@ -150,9 +149,9 @@ impl<const W: usize, const H: usize> std::str::FromStr for Grid<W, H> {
                 }
             }
         }
-        
+
         let grid = Grid { tokens };
-        
+
         Ok(grid)
     }
 }

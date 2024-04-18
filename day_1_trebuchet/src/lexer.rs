@@ -1,7 +1,7 @@
 pub struct Lexer<'a> {
-    content: &'a [char]
+    content: &'a [char],
 }
-impl <'a> Lexer<'a> {
+impl<'a> Lexer<'a> {
     pub fn new(content: &'a [char]) -> Lexer<'a> {
         Lexer { content }
     }
@@ -34,10 +34,10 @@ impl <'a> Lexer<'a> {
 
         for i in 0..alpha_end {
             let slice = &alpha_token[i..];
-    
-            if  slice.starts_with(&['o','n','e']) ||
-                slice.starts_with(&['t','w','o']) ||
-                slice.starts_with(&['s','i','x'])
+
+            if slice.starts_with(&['o', 'n', 'e'])
+                || slice.starts_with(&['t', 'w', 'o'])
+                || slice.starts_with(&['s', 'i', 'x'])
             {
                 if i != 0 {
                     return Some(i);
@@ -45,9 +45,9 @@ impl <'a> Lexer<'a> {
                     return Some(3);
                 }
             }
-            if  slice.starts_with(&['t','h','r','e','e']) ||
-                slice.starts_with(&['e','i','g','h','t']) ||
-                slice.starts_with(&['s','e','v','e','n'])
+            if slice.starts_with(&['t', 'h', 'r', 'e', 'e'])
+                || slice.starts_with(&['e', 'i', 'g', 'h', 't'])
+                || slice.starts_with(&['s', 'e', 'v', 'e', 'n'])
             {
                 if i != 0 {
                     return Some(i);
@@ -55,9 +55,9 @@ impl <'a> Lexer<'a> {
                     return Some(5);
                 }
             }
-            if  slice.starts_with(&['f','o','u','r']) ||
-                slice.starts_with(&['f','i','v','e']) ||
-                slice.starts_with(&['n','i','n','e'])
+            if slice.starts_with(&['f', 'o', 'u', 'r'])
+                || slice.starts_with(&['f', 'i', 'v', 'e'])
+                || slice.starts_with(&['n', 'i', 'n', 'e'])
             {
                 if i != 0 {
                     return Some(i);
@@ -66,14 +66,14 @@ impl <'a> Lexer<'a> {
                 }
             }
         }
-    
+
         None
     }
 
     /// This function truncates the left most token (ignoring whitespace) and returns it
-    /// 
-    /// 
-    /// # Parameters 
+    ///
+    ///
+    /// # Parameters
     ///  - token_definition: a non environment capturing function that represents which characters are valid for a token
     fn cut_token(&mut self, token_definition: fn(char) -> bool) -> &'a [char] {
         self.cut(self.find_token_end(token_definition))
@@ -84,39 +84,30 @@ impl <'a> Lexer<'a> {
         if self.content.is_empty() {
             None
         }
-
         // is the token a stretch of whitespace?
         else if self.content[0].is_whitespace() {
             self.cut_token(|character| character.is_whitespace());
             self.next_token()
         }
-
         // is the token a number. only do single digits
         else if self.content[0].is_numeric() {
             Some(self.cut(1))
         }
-
         // is the token a string
         else if self.content[0].is_alphabetic() {
             if let Some(token_end) = self.find_digit_str_token() {
                 Some(self.cut(token_end))
-            }
-            else {
+            } else {
                 Some(self.cut_token(|character| character.is_alphabetic()))
             }
-        }
-
-        else {
+        } else {
             None
         }
     }
 }
 impl Into<Vec<String>> for Lexer<'_> {
     fn into(self) -> Vec<String> {
-        self.map(|token| {
-            token.iter().collect()
-        })
-        .collect()
+        self.map(|token| token.iter().collect()).collect()
     }
 }
 impl<'a> Iterator for Lexer<'a> {
@@ -135,10 +126,10 @@ abctwo4";
     for line in input.lines() {
         let line_chars = line.chars().collect::<Vec<_>>();
         let tokens: Vec<String> = Lexer::new(&line_chars).into();
-        
+
         print!("{}\n[", line);
         for (i, token) in tokens.iter().enumerate() {
-            print!("{}{}", token, if i == tokens.len() - 1 {""} else {", "});
+            print!("{}{}", token, if i == tokens.len() - 1 { "" } else { ", " });
         }
         println!("]\n");
     }
@@ -157,7 +148,7 @@ treb7uchet";
 
         print!("{}\n[", line);
         for (i, token) in tokens.iter().enumerate() {
-            print!("{}{}", token, if i == tokens.len() - 1 {""} else {", "});
+            print!("{}{}", token, if i == tokens.len() - 1 { "" } else { ", " });
         }
         println!("]\n");
     }
@@ -173,32 +164,34 @@ fivefive
 sixsix
 sevenseven
 eighteight
-ninenine".chars().collect::<Vec<_>>();
+ninenine"
+        .chars()
+        .collect::<Vec<_>>();
 
     let tokens: Vec<String> = Lexer::new(&input).into();
 
     print!("{}\n[", input.iter().collect::<String>());
     for (i, token) in tokens.iter().enumerate() {
-        print!("{}{}", token, if i == tokens.len() - 1 {""} else {", "});
+        print!("{}{}", token, if i == tokens.len() - 1 { "" } else { ", " });
     }
     println!("]\n");
 
-    assert_eq!("one",   tokens[ 0]);
-    assert_eq!("one",   tokens[ 1]);
-    assert_eq!("two",   tokens[ 2]);
-    assert_eq!("two",   tokens[ 3]);
-    assert_eq!("three", tokens[ 4]);
-    assert_eq!("three", tokens[ 5]);
-    assert_eq!("four",  tokens[ 6]);
-    assert_eq!("four",  tokens[ 7]);
-    assert_eq!("five",  tokens[ 8]);
-    assert_eq!("five",  tokens[ 9]);
-    assert_eq!("six",   tokens[10]);
-    assert_eq!("six",   tokens[11]);
+    assert_eq!("one", tokens[0]);
+    assert_eq!("one", tokens[1]);
+    assert_eq!("two", tokens[2]);
+    assert_eq!("two", tokens[3]);
+    assert_eq!("three", tokens[4]);
+    assert_eq!("three", tokens[5]);
+    assert_eq!("four", tokens[6]);
+    assert_eq!("four", tokens[7]);
+    assert_eq!("five", tokens[8]);
+    assert_eq!("five", tokens[9]);
+    assert_eq!("six", tokens[10]);
+    assert_eq!("six", tokens[11]);
     assert_eq!("seven", tokens[12]);
     assert_eq!("seven", tokens[13]);
     assert_eq!("eight", tokens[14]);
     assert_eq!("eight", tokens[15]);
-    assert_eq!("nine",  tokens[16]);
-    assert_eq!("nine",  tokens[17]);
+    assert_eq!("nine", tokens[16]);
+    assert_eq!("nine", tokens[17]);
 }

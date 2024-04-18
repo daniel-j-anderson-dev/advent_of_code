@@ -1,0 +1,17 @@
+File = _{ SOI ~ Card* ~ EOI }
+
+Card = { CardHeader ~ CardNumbers ~ NEWLINE}
+
+CardHeader = _{ "Card" ~ Whitespace+ ~ Number ~ ":" }
+
+Numbers = { (Whitespace+ ~ Number)+ }
+
+CardNumbers = _{ 
+    Numbers ~
+    Whitespace+ ~ "|" ~
+    Numbers
+}
+
+Number = @{ ASCII_DIGIT+ }
+
+Whitespace = _{ " " | "\t" }

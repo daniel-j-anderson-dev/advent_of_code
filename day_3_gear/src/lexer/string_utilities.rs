@@ -1,8 +1,5 @@
 // credit to carlomilanesi!: https://users.rust-lang.org/t/how-to-get-a-substring-of-a-string/1351/11
-use std::ops::{
-    Bound,
-    RangeBounds,
-};
+use std::ops::{Bound, RangeBounds};
 
 pub trait StringUtilities {
     fn substring(&self, start: usize, length: usize) -> &str;
@@ -20,9 +17,9 @@ impl StringUtilities for str {
                 Some(character) => {
                     character_index += 1;
                     byte_start += character.len_utf8();
-                },
+                }
                 None => break,
-            }    
+            }
         }
 
         let mut character_index = 0;
@@ -33,7 +30,7 @@ impl StringUtilities for str {
                 Some(character) => {
                     character_index += 1;
                     byte_end += character.len_utf8();
-                },
+                }
                 None => break,
             }
         }
@@ -43,8 +40,7 @@ impl StringUtilities for str {
 
     fn slice(&self, range: impl RangeBounds<usize>) -> &str {
         let start = match range.start_bound() {
-            Bound::Included(bound) |
-            Bound::Excluded(bound) => *bound,
+            Bound::Included(bound) | Bound::Excluded(bound) => *bound,
             Bound::Unbounded => 0,
         };
 

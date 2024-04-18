@@ -1,9 +1,8 @@
-mod lexer;
 mod grid;
+mod lexer;
 
 use grid::{Grid, TokenKind};
 use lexer::Lexer;
-
 
 fn main() -> Result<(), std::io::Error> {
     let input = std::fs::read_to_string("day3.txt")?;
@@ -15,4 +14,3 @@ fn main() -> Result<(), std::io::Error> {
 
     Ok(())
 }
-

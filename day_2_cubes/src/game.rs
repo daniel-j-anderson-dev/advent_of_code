@@ -30,7 +30,7 @@ impl Game {
     pub fn is_possible(&self) -> bool {
         for set in self.sets.iter() {
             if !set.is_possible(Game::MAX) {
-                return false
+                return false;
             }
         }
         true
@@ -52,7 +52,7 @@ impl Game {
     }
     pub fn id(&self) -> usize {
         self.id
-    } 
+    }
 }
 
 impl std::str::FromStr for Game {
@@ -72,45 +72,33 @@ impl std::str::FromStr for Game {
             match token {
                 Token::Game(id) => {
                     if game_id.is_none() {
-                       game_id = Some(id);
+                        game_id = Some(id);
                     } else {
-                        return Err("A game id already exists. More than one Game token".into())
+                        return Err("A game id already exists. More than one Game token".into());
                     }
-                },
+                }
                 Token::Red(cube_count) => {
                     red = *cube_count;
-                },
+                }
                 Token::Green(cube_count) => {
                     green = *cube_count;
-                },
+                }
                 Token::Blue(cube_count) => {
                     blue = *cube_count;
-                },
-                Token::Other(separator) =>  {
+                }
+                Token::Other(separator) => {
                     if separator == ";" {
-                        sets.push (
-                            CubeSet {
-                                red,
-                                blue,
-                                green,
-                            }
-                        );
+                        sets.push(CubeSet { red, blue, green });
                         red = 0;
                         green = 0;
                         blue = 0;
                     }
                     continue;
-                },
+                }
             }
 
             if token_index == tokens.len() - 1 {
-                sets.push (
-                    CubeSet {
-                        red,
-                        blue,
-                        green,
-                    }
-                );
+                sets.push(CubeSet { red, blue, green });
                 red = 0;
                 green = 0;
                 blue = 0;
@@ -128,4 +116,3 @@ impl std::str::FromStr for Game {
         Ok(game)
     }
 }
-

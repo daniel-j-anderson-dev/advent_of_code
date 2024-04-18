@@ -2,8 +2,8 @@ mod string_utilities;
 use string_utilities::StringUtilities; // for taking slices of &str at char boundaries
 
 // I made the StringUtilities trait
-    // anything that implements the StringUtilities trait 
-    // will get the `slice` method
+// anything that implements the StringUtilities trait
+// will get the `slice` method
 // I implemented StringUtilities for str.
 // so now we can call .slice(..) on any &str!!!!!!!
 
@@ -44,27 +44,22 @@ impl<'a> Iterator for Lexer<'a> {
         if self.content.is_empty() {
             None
         }
-
         // is the next token a stretch of whitespace?
         else if self.content.get_char(0).expect("not empty").is_whitespace() {
             Some(self.cut_uniform_token(|c| c.is_whitespace()))
         }
-
         // is the next token numeric?
         else if self.content.get_char(0).expect("not empty").is_numeric() {
             Some(self.cut_uniform_token(|c| c.is_numeric()))
         }
-
         // is the next token alphabetic?
         else if self.content.get_char(0).expect("not empty").is_alphabetic() {
             Some(self.cut_uniform_token(|c| c.is_alphabetic()))
         }
-
         // is the next token a separator
         else if self.content.get_char(0).expect("not empty") == '.' {
             Some(self.cut_uniform_token(|c| c == '.'))
         }
-
         // the next token is a symbol
         else {
             Some(self.cut_uniform_token(|c| c != '.' && !c.is_alphanumeric() && !c.is_whitespace()))
@@ -93,7 +88,10 @@ fn test_iteration() {
     assert_eq!(lexer.next().unwrap(), "450");
     assert_eq!(lexer.next().unwrap(), ".........................");
     assert_eq!(lexer.next().unwrap(), "183");
-    assert_eq!(lexer.next().unwrap(), ".............................................");
+    assert_eq!(
+        lexer.next().unwrap(),
+        "............................................."
+    );
 }
 
 #[test]
@@ -108,23 +106,23 @@ fn test_find_uniform_token_end() {
         character == '.'
     }
 
-    let token1_end  = lexer.find_uniform_token_end(separator_token_definition);
+    let token1_end = lexer.find_uniform_token_end(separator_token_definition);
     lexer.cut_at(token1_end);
-    let token2_end  = lexer.find_uniform_token_end(numeric_token_definition);
+    let token2_end = lexer.find_uniform_token_end(numeric_token_definition);
     lexer.cut_at(token2_end);
-    let token3_end  = lexer.find_uniform_token_end(separator_token_definition);
+    let token3_end = lexer.find_uniform_token_end(separator_token_definition);
     lexer.cut_at(token3_end);
-    let token4_end  = lexer.find_uniform_token_end(numeric_token_definition);
+    let token4_end = lexer.find_uniform_token_end(numeric_token_definition);
     lexer.cut_at(token4_end);
-    let token5_end  = lexer.find_uniform_token_end(separator_token_definition);
+    let token5_end = lexer.find_uniform_token_end(separator_token_definition);
     lexer.cut_at(token5_end);
-    let token6_end  = lexer.find_uniform_token_end(numeric_token_definition);
+    let token6_end = lexer.find_uniform_token_end(numeric_token_definition);
     lexer.cut_at(token6_end);
-    let token7_end  = lexer.find_uniform_token_end(separator_token_definition);
+    let token7_end = lexer.find_uniform_token_end(separator_token_definition);
     lexer.cut_at(token7_end);
-    let token8_end  = lexer.find_uniform_token_end(numeric_token_definition);
+    let token8_end = lexer.find_uniform_token_end(numeric_token_definition);
     lexer.cut_at(token8_end);
-    let token9_end  = lexer.find_uniform_token_end(separator_token_definition);
+    let token9_end = lexer.find_uniform_token_end(separator_token_definition);
     lexer.cut_at(token9_end);
     let token10_end = lexer.find_uniform_token_end(numeric_token_definition);
     lexer.cut_at(token10_end);

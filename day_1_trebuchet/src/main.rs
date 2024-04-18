@@ -12,30 +12,26 @@ fn main() {
 
         sum += calibration_value;
     }
-    
+
     println!("{}", sum);
 }
-
 
 fn decode_digits(line: &str) -> Vec<usize> {
     let line: Vec<char> = line.chars().collect();
     let tokens: Vec<String> = Lexer::new(&line).into();
-    
-    let digits = tokens.iter()
-        .filter_map(
-            |token| {
-                token_to_digit(token)
-            }
-        )
+
+    let digits = tokens
+        .iter()
+        .filter_map(|token| token_to_digit(token))
         .collect();
-    
+
     digits
 }
 
 fn decode_calibration_value(digits: &[usize]) -> usize {
     let first = digits.first().unwrap_or(&0);
     let last = digits.last().unwrap_or(&0);
-    
+
     let calibration_value = format!("{}{}", first, last)
         .parse()
         .expect("first and last are digits");
@@ -56,9 +52,7 @@ fn token_to_digit(token: &str) -> Option<usize> {
         "nine" => Some(9),
         _ => match token.parse::<usize>() {
             Ok(digit) => Some(digit),
-            Err(_) => {
-                None
-            },
-        }
+            Err(_) => None,
+        },
     }
 }

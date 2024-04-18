@@ -2,16 +2,13 @@ File = _{ SOI ~ Card* ~ EOI }
 
 Card = { CardHeader ~ CardNumbers ~ NEWLINE}
 
-CardHeader = _{ "Card" ~ Whitespace+ ~ Number ~ ":" }
+CardHeader = _{ "Card" ~ Number ~ ":" }
 
-Numbers = { (Whitespace+ ~ Number)+ }
+Numbers = { Number+ }
 
 CardNumbers = _{ 
-    Numbers ~
-    Whitespace+ ~ "|" ~
-    Numbers
-}
+    Numbers ~ "|" ~ Numbers }
 
 Number = @{ ASCII_DIGIT+ }
 
-Whitespace = _{ " " | "\t" }
+WHITESPACE = _{ " " | "\t" }

@@ -1,0 +1,11 @@
+File = _{ SOI ~ Group+ ~ EOI }
+
+Group = { Name ~ ":" ~ (Number+ | Triplet+) }
+
+Triplet = { Number{3} }
+
+Name = @{ ALPHABETIC ~ (ALPHABETIC | "-" | " " )* }
+
+Number = @{ ASCII_DIGIT+ }
+
+WHITESPACE = _{ " " | NEWLINE }

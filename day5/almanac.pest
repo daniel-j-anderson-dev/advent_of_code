@@ -1,10 +1,8 @@
 File = _{ SOI ~ Group+ ~ EOI }
 
-Group = { Name ~ ":" ~ (Number+ | Triplet+) }
+Group = {  Name ~ ":" ~ Number+ }
 
-Triplet = { Number{3} }
-
-Name = @{ ALPHABETIC ~ (ALPHABETIC | "-" | " " )* }
+Name = @{ ALPHABETIC ~ ( ASCII_ALPHANUMERIC  | "-" | " " )* }
 
 Number = @{ ASCII_DIGIT+ }
 

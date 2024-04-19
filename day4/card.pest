@@ -4,10 +4,9 @@ Card = { CardHeader ~ CardNumbers ~ NEWLINE}
 
 CardHeader = _{ "Card" ~ Number ~ ":" }
 
-Numbers = { Number+ }
+CardNumbers = _{ Numbers ~ "|" ~ Numbers }
 
-CardNumbers = _{ 
-    Numbers ~ "|" ~ Numbers }
+Numbers = { Number+ }
 
 Number = @{ ASCII_DIGIT+ }
 
